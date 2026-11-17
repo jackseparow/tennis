@@ -13,10 +13,13 @@
 <body class="bg-slate-900 text-slate-100 min-h-screen p-4 sm:p-6">
 
     <div class="max-w-5xl mx-auto">
-        <!-- Header -->
-        <header class="text-center mb-8">
-            <h1 class="text-3xl font-bold tracking-tight text-emerald-400">🎾 PadeLion Tennis Tournament Pro</h1>
-            <p class="text-slate-400 text-sm mt-1">Advanced Round Robin, Group Pools, Knockout & Custom Scoring</p>
+        <!-- Header dengan Logo PadeLion -->
+        <header class="text-center mb-8 flex flex-col items-center justify-center space-y-3">
+            <img src="logo padelion.png" alt="Logo PadeLion" class="h-16 w-auto object-contain drop-shadow-md" onerror="this.style.display='none'">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight text-emerald-400">🎾 PadeLion Tennis Tournament Pro</h1>
+                <p class="text-slate-400 text-sm mt-1">Advanced Round Robin, Group Pools, Knockout & Custom Scoring</p>
+            </div>
         </header>
 
         <!-- TAHAP 1: SETUP TURNAMEN -->
@@ -34,6 +37,13 @@ Tim Echo
 Tim Foxtrot</textarea>
                 </div>
                 <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Metode Pembagian Pool</label>
+                        <select id="input-assignment-method" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-emerald-500">
+                            <option value="auto">Acak Otomatis oleh Aplikasi (Shuffle)</option>
+                            <option value="manual">Urut Manual sesuai Daftar di Samping</option>
+                        </select>
+                    </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-300 mb-1">Jumlah Pool / Grup</label>
                         <select id="input-pools" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-emerald-500">
@@ -97,9 +107,7 @@ Tim Foxtrot</textarea>
                 <h2 class="text-lg font-semibold text-emerald-300">Bagan Fase Gugur (Semifinal & Final)</h2>
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
                     <p class="text-sm text-slate-400 mb-4">Pemenang atau Runner-up dari tiap grup otomatis melaju ke tahap ini setelah semua laga grup selesai.</p>
-                    <div id="knockout-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Terisi otomatis -->
-                    </div>
+                    <div id="knockout-container" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
                 </div>
             </div>
 
@@ -168,16 +176,16 @@ Tim Foxtrot</textarea>
     <!-- JavaScript Logika Lengkap -->
     <script>
         let players = [];
-        let pools = {}; // { 'Pool A': ['Tim 1', 'Tim 2'], 'Pool B': ['Tim 3', 'Tim 4'] }
-        let matches = []; // Group matches
-        let knockoutMatches = []; // Semifinal / Final matches
+        let pools = {}; 
+        let matches = []; 
+        let knockoutMatches = []; 
         let config = { sets: 3, gamesPerSet: 6, scoringSystem: 'game-diff' };
-        let activeMatchContext = { type: 'group', index: null }; // type: 'group' or 'knockout'
+        let activeMatchContext = { type: 'group', index: null };
         
         const pointSequence = ['0', '15', '30', '40', 'AD'];
 
         function initTournament() {
-            const rawText = document.getElementById('input-players').value;
+            let rawText = document.getElementById('input-players').value;
             players = rawText.split('\n').map(p => p.trim()).filter(p => p.length > 0);
             
             if (players.length < 2) {
@@ -190,18 +198,29 @@ Tim Foxtrot</textarea>
             config.scoringSystem = document.getElementById('input-scoring-system').value;
 
             const numPools = parseInt(document.getElementById('input-pools').value);
+            const method = document.getElementById('input-assignment-method').value;
+
+            // Jika metode 'auto', acak urutan pemain (Fisher-Yates Shuffle)
+            if (method === 'auto') {
+                for (let i = players.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [players[i], players[j]] = [players[j], players[i]];
+                }
+            }
             
-            // Bagi pemain ke dalam pools secara merata
+            // Inisialisasi Pools
             pools = {};
             for (let i = 0; i < numPools; i++) {
                 pools[`Pool ${String.fromCharCode(65 + i)}`] = [];
             }
+
+            // Distribusi pemain ke pools
             players.forEach((p, idx) => {
                 const poolKey = `Pool ${String.fromCharCode(65 + (idx % numPools))}`;
                 pools[poolKey].push(p);
             });
 
-            // Generate Group Matches (Round Robin per Pool)
+            // Generate Group Matches
             matches = [];
             Object.keys(pools).forEach(poolName => {
                 const poolPlayers = pools[poolName];
@@ -222,7 +241,7 @@ Tim Foxtrot</textarea>
                 }
             });
 
-            // Generate Knockout placeholder (misal Semifinal jika >= 4 tim)
+            // Generate Knockout placeholder
             knockoutMatches = [
                 { title: 'Semifinal 1', p1: 'Juara Pool A', p2: 'Runner-up Pool B', p1Sets: 0, p2Sets: 0, p1Games: 0, p2Games: 0, p1PointIndex: 0, p2PointIndex: 0, isFinished: false, winner: null },
                 { title: 'Semifinal 2', p1: 'Juara Pool B', p2: 'Runner-up Pool A', p1Sets: 0, p2Sets: 0, p1Games: 0, p2Games: 0, p1PointIndex: 0, p2PointIndex: 0, isFinished: false, winner: null },
@@ -268,7 +287,7 @@ Tim Foxtrot</textarea>
                             <div class="text-base font-bold text-slate-100 mb-3">
                                 ${m.p1} <span class="text-emerald-400 font-normal">vs</span> ${m.p2}
                             </div>
-                            <div class="text-sm text-slate-900 bg-slate-900 p-2 rounded-lg mb-4 flex justify-between text-slate-300">
+                            <div class="text-sm bg-slate-900 p-2 rounded-lg mb-4 flex justify-between text-slate-300">
                                 <span>Set: <b>${m.p1Sets} - ${m.p2Sets}</b></span>
                                 <span>Game Berjalan: ${m.p1Games} - ${m.p2Games}</span>
                             </div>
@@ -430,13 +449,11 @@ Tim Foxtrot</textarea>
                     }
                 });
 
-                // Urutkan berdasarkan sistem pilihan
                 let sorted = [...poolPlayers].sort((a, b) => {
                     let sA = stats[a], sB = stats[b];
                     if (config.scoringSystem === 'match-wins') {
                         if (sB.points !== sA.points) return sB.points - sA.points;
                     }
-                    // Tie-break / Utama berdasarkan Selisih Game (Game Won - Game Lost)
                     let diffA = sA.gamesWon - sA.gamesLost;
                     let diffB = sB.gamesWon - sB.gamesLost;
                     if (diffB !== diffA) return diffB - diffA;
