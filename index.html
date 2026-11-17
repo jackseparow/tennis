@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PadeLion Tennis Tournament Tracker</title>
-    <!-- Tailwind CSS untuk Desain Responsif & Modern -->
+    <title>PadeLion Tennis Tournament Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -13,134 +12,141 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen p-4 sm:p-6">
 
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-5xl mx-auto">
         <!-- Header -->
         <header class="text-center mb-8">
-            <h1 class="text-3xl font-bold tracking-tight text-emerald-400">🎾 Tennis Tournament Tracker</h1>
-            <p class="text-slate-400 text-sm mt-1">Custom Round Robin & Live Match Scoreboard</p>
+            <h1 class="text-3xl font-bold tracking-tight text-emerald-400">🎾 PadeLion Tennis Tournament Pro</h1>
+            <p class="text-slate-400 text-sm mt-1">Advanced Round Robin, Group Pools, Knockout & Custom Scoring</p>
         </header>
 
         <!-- TAHAP 1: SETUP TURNAMEN -->
         <div id="setup-section" class="bg-slate-800 rounded-2xl p-6 shadow-xl border border-slate-700 mb-6">
-            <h2 class="text-xl font-semibold mb-4 text-emerald-300">1. Konfigurasi Turnamen</h2>
+            <h2 class="text-xl font-semibold mb-4 text-emerald-300">1. Konfigurasi Turnamen & Grup</h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1">Daftar Pemain/Tim (Pisahkan dengan Enter)</label>
-                    <textarea id="input-players" rows="5" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-emerald-500" placeholder="Pasangan A-B&#10;Pasangan C-D&#10;Pasangan E-F&#10;Pasangan G-H">Tim Alpha
+                    <textarea id="input-players" rows="6" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-emerald-500" placeholder="Tim Alpha&#10;Tim Bravo&#10;Tim Charlie&#10;Tim Delta&#10;Tim Echo&#10;Tim Foxtrot">Tim Alpha
 Tim Bravo
 Tim Charlie
-Tim Delta</textarea>
+Tim Delta
+Tim Echo
+Tim Foxtrot</textarea>
                 </div>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1">Maksimal Set per Pertandingan</label>
-                        <select id="input-sets" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-emerald-500">
-                            <option value="1">1 Set (Penentuan)</option>
-                            <option value="3" selected>Best of 3 Sets</option>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Jumlah Pool / Grup</label>
+                        <select id="input-pools" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-emerald-500">
+                            <option value="1">1 Grup (Single Pool)</option>
+                            <option value="2" selected>2 Grup (Pool A & Pool B)</option>
+                            <option value="3">3 Grup (Pool A, B, C)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1">Game per Set (Misal: 6 Game)</label>
-                        <input type="number" id="input-games" value="6" min="1" max="10" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-emerald-500">
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Sistem Penilaian Klasemen</label>
+                        <select id="input-scoring-system" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-emerald-500">
+                            <option value="match-wins">Poin dari Kemenangan Match/Set (Standar)</option>
+                            <option value="game-diff" selected>Berbasis Selisih Game (Game Won - Lost)</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">Max Set</label>
+                            <select id="input-sets" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                                <option value="1">1 Set</option>
+                                <option value="3" selected>Best of 3</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">Game per Set</label>
+                            <input type="number" id="input-games" value="6" min="1" max="10" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
                     </div>
                 </div>
             </div>
             <button onclick="initTournament()" class="w-full bg-emerald-600 hover:bg-emerald-500 font-semibold py-3 rounded-xl transition duration-200 shadow-lg shadow-emerald-900/30">
-                Buat Jadwal & Klasemen 🚀
+                Generate Grup, Jadwal & Bagan Knockout 🚀
             </button>
         </div>
 
-        <!-- TAHAP 2 & 3: DASHBOARD UTAMA (JADWAL & KLASEMEN) -->
+        <!-- TAHAP 2: DASHBOARD UTAMA -->
         <div id="dashboard-section" class="hidden space-y-6">
             
             <!-- Tab Navigation -->
-            <div class="flex space-x-2 border-b border-slate-700 pb-2">
-                <button onclick="switchTab('matches')" id="btn-tab-matches" class="px-4 py-2 rounded-lg font-semibold text-sm bg-emerald-600 text-white transition">Jadwal & Pertandingan</button>
-                <button onclick="switchTab('standings')" id="btn-tab-standings" class="px-4 py-2 rounded-lg font-semibold text-sm bg-slate-800 text-slate-400 hover:bg-slate-700 transition">Klasemen Sementara</button>
-                <button onclick="resetTournament()" class="ml-auto px-4 py-2 rounded-lg font-semibold text-sm bg-rose-900/40 text-rose-300 hover:bg-rose-900/60 transition">Reset</button>
+            <div class="flex flex-wrap gap-2 border-b border-slate-700 pb-2">
+                <button onclick="switchTab('matches')" id="btn-tab-matches" class="px-4 py-2 rounded-lg font-semibold text-sm bg-emerald-600 text-white transition">Jadwal Pertandingan</button>
+                <button onclick="switchTab('standings')" id="btn-tab-standings" class="px-4 py-2 rounded-lg font-semibold text-sm bg-slate-800 text-slate-400 hover:bg-slate-700 transition">Klasemen Grup</button>
+                <button onclick="switchTab('knockout')" id="btn-tab-knockout" class="px-4 py-2 rounded-lg font-semibold text-sm bg-slate-800 text-slate-400 hover:bg-slate-700 transition">Bagan Knockout (Semifinal/Final)</button>
+                <button onclick="resetTournament()" class="ml-auto px-4 py-2 rounded-lg font-semibold text-sm bg-rose-900/40 text-rose-300 hover:bg-rose-900/60 transition">Reset Turnamen</button>
             </div>
 
-            <!-- TAB 1: JADWAL & DAFTAR MATCH -->
+            <!-- TAB 1: JADWAL PERTANDINGAN GRUP -->
             <div id="tab-matches" class="space-y-4">
-                <h2 class="text-lg font-semibold text-emerald-300">Daftar Pertandingan (Round Robin)</h2>
-                <div id="matches-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Dinamis terisi dari JS -->
-                </div>
+                <h2 class="text-lg font-semibold text-emerald-300">Jadwal Babak Penyisihan Grup (Round Robin)</h2>
+                <div id="matches-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
 
-            <!-- TAB 2: KLASEMEN -->
-            <div id="tab-standings" class="hidden space-y-4">
-                <h2 class="text-lg font-semibold text-emerald-300">Klasemen Kompetisi</h2>
-                <div class="overflow-x-auto bg-slate-800 rounded-2xl border border-slate-700 shadow-xl">
-                    <table class="w-full text-left border-collapse text-sm">
-                        <thead>
-                            <tr class="bg-slate-700/50 text-slate-300 border-b border-slate-700">
-                                <th class="p-3 text-center w-12">Pos</th>
-                                <th class="p-3">Pemain / Tim</th>
-                                <th class="p-3 text-center">Main</th>
-                                <th class="p-3 text-center">M</th>
-                                <th class="p-3 text-center">K</th>
-                                <th class="p-3 text-center">Set (+/-)</th>
-                                <th class="p-3 text-center">Game (+/-)</th>
-                                <th class="p-3 text-center font-bold">Poin</th>
-                            </tr>
-                        </thead>
-                        <tbody id="standings-body">
-                            <!-- Dinamis terisi dari JS -->
-                        </tbody>
-                    </table>
+            <!-- TAB 2: KLASEMEN GRUP -->
+            <div id="tab-standings" class="hidden space-y-6">
+                <h2 class="text-lg font-semibold text-emerald-300">Klasemen Berdasarkan Grup</h2>
+                <div id="standings-container" class="space-y-6"></div>
+            </div>
+
+            <!-- TAB 3: BAGAN KNOCKOUT -->
+            <div id="tab-knockout" class="hidden space-y-4">
+                <h2 class="text-lg font-semibold text-emerald-300">Bagan Fase Gugur (Semifinal & Final)</h2>
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                    <p class="text-sm text-slate-400 mb-4">Pemenang atau Runner-up dari tiap grup otomatis melaju ke tahap ini setelah semua laga grup selesai.</p>
+                    <div id="knockout-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Terisi otomatis -->
+                    </div>
                 </div>
             </div>
 
         </div>
 
-        <!-- MODAL / LAYAR PENCATATAN SKOR (LIVE MATCH SCOREBOARD) -->
+        <!-- MODAL PENCATATAN SKOR -->
         <div id="scoreboard-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
             <div class="bg-slate-800 w-full max-w-2xl rounded-2xl border border-slate-700 p-6 shadow-2xl relative">
                 <button onclick="closeScoreboard()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">✕</button>
                 
                 <div class="text-center mb-6">
-                    <span id="modal-match-title" class="text-xs uppercase tracking-wider bg-emerald-900/50 text-emerald-300 px-3 py-1 rounded-full font-semibold">Match #1</span>
+                    <span id="modal-match-title" class="text-xs uppercase tracking-wider bg-emerald-900/50 text-emerald-300 px-3 py-1 rounded-full font-semibold">Match</span>
                     <h3 id="modal-match-teams" class="text-xl font-bold mt-2">Tim A vs Tim B</h3>
                 </div>
 
                 <!-- Papan Skor Utama -->
                 <div class="grid grid-cols-2 gap-4 mb-6">
-                    <!-- Tim 1 Card -->
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 text-center">
                         <div id="team1-name" class="font-bold text-slate-200 truncate mb-2">Tim A</div>
-                        <div class="text-4xl font-extrabold text-emerald-400 mb-1" id="team1-sets">0</div>
-                        <div class="text-xs text-slate-400 mb-3">Set Menang</div>
-                        <div class="bg-slate-800 py-2 rounded-lg border border-slate-700 mb-3">
-                            <span class="text-xs text-slate-400 block">Game Berjalan:</span>
-                            <span id="team1-games" class="text-2xl font-bold text-white">0</span>
+                        <div class="text-3xl font-extrabold text-emerald-400 mb-1" id="team1-sets">0</div>
+                        <div class="text-xs text-slate-400 mb-2">Set Menang</div>
+                        <div class="bg-slate-800 py-1.5 rounded-lg border border-slate-700 mb-2">
+                            <span class="text-xs text-slate-400">Game: <strong id="team1-games" class="text-white text-lg">0</strong></span>
                         </div>
                         <div class="bg-emerald-950/60 border border-emerald-800 py-2 rounded-lg">
-                            <span class="text-xs text-emerald-400 block">Poin Saat Ini:</span>
-                            <span id="team1-points" class="text-3xl font-black text-emerald-300">0</span>
+                            <span class="text-xs text-emerald-400 block">Poin:</span>
+                            <span id="team1-points" class="text-2xl font-black text-emerald-300">0</span>
                         </div>
                     </div>
 
-                    <!-- Tim 2 Card -->
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 text-center">
                         <div id="team2-name" class="font-bold text-slate-200 truncate mb-2">Tim B</div>
-                        <div class="text-4xl font-extrabold text-emerald-400 mb-1" id="team2-sets">0</div>
-                        <div class="text-xs text-slate-400 mb-3">Set Menang</div>
-                        <div class="bg-slate-800 py-2 rounded-lg border border-slate-700 mb-3">
-                            <span class="text-xs text-slate-400 block">Game Berjalan:</span>
-                            <span id="team2-games" class="text-2xl font-bold text-white">0</span>
+                        <div class="text-3xl font-extrabold text-emerald-400 mb-1" id="team2-sets">0</div>
+                        <div class="text-xs text-slate-400 mb-2">Set Menang</div>
+                        <div class="bg-slate-800 py-1.5 rounded-lg border border-slate-700 mb-2">
+                            <span class="text-xs text-slate-400">Game: <strong id="team2-games" class="text-white text-lg">0</strong></span>
                         </div>
                         <div class="bg-emerald-950/60 border border-emerald-800 py-2 rounded-lg">
-                            <span class="text-xs text-emerald-400 block">Poin Saat Ini:</span>
-                            <span id="team3-points" class="text-3xl font-black text-emerald-300">0 (Tim 2)</span>
+                            <span class="text-xs text-emerald-400 block">Poin:</span>
+                            <span id="team2-points" class="text-2xl font-black text-emerald-300">0</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tombol Input Poin Tenis -->
+                <!-- Tombol Input Poin -->
                 <div class="space-y-3">
-                    <div class="text-xs text-slate-400 text-center">Klik tombol poin untuk tim yang mencetak angka:</div>
+                    <div class="text-xs text-slate-400 text-center">Klik tombol poin untuk tim yang mencetak angka (15, 30, 40, Game):</div>
                     <div class="grid grid-cols-2 gap-4">
                         <button onclick="addPoint(0)" class="bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold text-white shadow-lg transition">
                             + Poin <span id="btn-name-1">Tim A</span>
@@ -151,7 +157,6 @@ Tim Delta</textarea>
                     </div>
                 </div>
 
-                <!-- Status Pertandingan / Pemenang -->
                 <div id="match-status-alert" class="mt-4 p-3 bg-slate-900 rounded-xl text-center text-sm font-medium text-amber-300 hidden">
                     Pertandingan Selesai! Pemenang: <span id="winner-text" class="font-bold"></span>
                 </div>
@@ -160,12 +165,14 @@ Tim Delta</textarea>
 
     </div>
 
-    <!-- JavaScript Logika Turnamen & Skor Tenis -->
+    <!-- JavaScript Logika Lengkap -->
     <script>
         let players = [];
-        let matches = [];
-        let config = { sets: 3, gamesPerSet: 6 };
-        let activeMatchIndex = null;
+        let pools = {}; // { 'Pool A': ['Tim 1', 'Tim 2'], 'Pool B': ['Tim 3', 'Tim 4'] }
+        let matches = []; // Group matches
+        let knockoutMatches = []; // Semifinal / Final matches
+        let config = { sets: 3, gamesPerSet: 6, scoringSystem: 'game-diff' };
+        let activeMatchContext = { type: 'group', index: null }; // type: 'group' or 'knockout'
         
         const pointSequence = ['0', '15', '30', '40', 'AD'];
 
@@ -180,51 +187,66 @@ Tim Delta</textarea>
 
             config.sets = parseInt(document.getElementById('input-sets').value);
             config.gamesPerSet = parseInt(document.getElementById('input-games').value);
+            config.scoringSystem = document.getElementById('input-scoring-system').value;
 
-            // Generate Round Robin Schedule
-            matches = [];
-            for (let i = 0; i < players.length; i++) {
-                for (let j = i + 1; j < players.length; j++) {
-                    matches.push({
-                        p1: players[i],
-                        p2: players[j],
-                        p1Sets: 0,
-                        p2Sets: 0,
-                        p1Games: 0,
-                        p2Games: 0,
-                        p1PointIndex: 0, // 0='0', 1='15', 2='30', 3='40'
-                        p2PointIndex: 0,
-                        isFinished: false,
-                        winner: null
-                    });
-                }
+            const numPools = parseInt(document.getElementById('input-pools').value);
+            
+            // Bagi pemain ke dalam pools secara merata
+            pools = {};
+            for (let i = 0; i < numPools; i++) {
+                pools[`Pool ${String.fromCharCode(65 + i)}`] = [];
             }
+            players.forEach((p, idx) => {
+                const poolKey = `Pool ${String.fromCharCode(65 + (idx % numPools))}`;
+                pools[poolKey].push(p);
+            });
+
+            // Generate Group Matches (Round Robin per Pool)
+            matches = [];
+            Object.keys(pools).forEach(poolName => {
+                const poolPlayers = pools[poolName];
+                for (let i = 0; i < poolPlayers.length; i++) {
+                    for (let j = i + 1; j < poolPlayers.length; j++) {
+                        matches.push({
+                            pool: poolName,
+                            p1: poolPlayers[i],
+                            p2: poolPlayers[j],
+                            p1Sets: 0, p2Sets: 0,
+                            p1Games: 0, p2Games: 0,
+                            totalP1GamesWon: 0, totalP1GamesLost: 0,
+                            totalP2GamesWon: 0, totalP2GamesLost: 0,
+                            p1PointIndex: 0, p2PointIndex: 0,
+                            isFinished: false, winner: null
+                        });
+                    }
+                }
+            });
+
+            // Generate Knockout placeholder (misal Semifinal jika >= 4 tim)
+            knockoutMatches = [
+                { title: 'Semifinal 1', p1: 'Juara Pool A', p2: 'Runner-up Pool B', p1Sets: 0, p2Sets: 0, p1Games: 0, p2Games: 0, p1PointIndex: 0, p2PointIndex: 0, isFinished: false, winner: null },
+                { title: 'Semifinal 2', p1: 'Juara Pool B', p2: 'Runner-up Pool A', p1Sets: 0, p2Sets: 0, p1Games: 0, p2Games: 0, p1PointIndex: 0, p2PointIndex: 0, isFinished: false, winner: null },
+                { title: 'Final', p1: 'Pemenang SF 1', p2: 'Pemenang SF 2', p1Sets: 0, p2Sets: 0, p1Games: 0, p2Games: 0, p1PointIndex: 0, p2PointIndex: 0, isFinished: false, winner: null }
+            ];
 
             document.getElementById('setup-section').classList.add('hidden');
             document.getElementById('dashboard-section').classList.remove('hidden');
             
             renderMatches();
             renderStandings();
+            renderKnockout();
         }
 
         function switchTab(tab) {
-            const matchesTab = document.getElementById('tab-matches');
-            const standingsTab = document.getElementById('tab-standings');
-            const btnMatches = document.getElementById('btn-tab-matches');
-            const btnStandings = document.getElementById('btn-tab-standings');
-
-            if (tab === 'matches') {
-                matchesTab.classList.remove('hidden');
-                standingsTab.classList.add('hidden');
-                btnMatches.className = "px-4 py-2 rounded-lg font-semibold text-sm bg-emerald-600 text-white transition";
-                btnStandings.className = "px-4 py-2 rounded-lg font-semibold text-sm bg-slate-800 text-slate-400 hover:bg-slate-700 transition";
-            } else {
-                matchesTab.classList.add('hidden');
-                standingsTab.classList.remove('hidden');
-                btnStandings.className = "px-4 py-2 rounded-lg font-semibold text-sm bg-emerald-600 text-white transition";
-                btnMatches.className = "px-4 py-2 rounded-lg font-semibold text-sm bg-slate-800 text-slate-400 hover:bg-slate-700 transition";
-                renderStandings();
-            }
+            ['matches', 'standings', 'knockout'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`btn-tab-${t}`).className = "px-4 py-2 rounded-lg font-semibold text-sm bg-slate-800 text-slate-400 hover:bg-slate-700 transition";
+            });
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            document.getElementById(`btn-tab-${tab}`).className = "px-4 py-2 rounded-lg font-semibold text-sm bg-emerald-600 text-white transition";
+            
+            if (tab === 'standings') renderStandings();
+            if (tab === 'knockout') updateKnockoutSeeds();
         }
 
         function renderMatches() {
@@ -233,8 +255,8 @@ Tim Delta</textarea>
 
             matches.forEach((m, idx) => {
                 const statusBadge = m.isFinished 
-                    ? `<span class="bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded text-xs">Selesai (Pemenang: ${m.winner})</span>`
-                    : `<span class="bg-amber-900/60 text-amber-300 px-2 py-0.5 rounded text-xs">Belum / Berlangsung</span>`;
+                    ? `<span class="bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded text-xs">Selesai: ${m.winner}</span>`
+                    : `<span class="bg-amber-900/60 text-amber-300 px-2 py-0.5 rounded text-xs">${m.pool}</span>`;
 
                 container.innerHTML += `
                     <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col justify-between shadow-md">
@@ -246,24 +268,24 @@ Tim Delta</textarea>
                             <div class="text-base font-bold text-slate-100 mb-3">
                                 ${m.p1} <span class="text-emerald-400 font-normal">vs</span> ${m.p2}
                             </div>
-                            <div class="text-sm text-slate-300 bg-slate-900 p-2 rounded-lg mb-4 flex justify-between">
-                                <span>Skor Set: <b>${m.p1Sets} - ${m.p2Sets}</b></span>
-                                <span>Game: ${m.p1Games} - ${m.p2Games}</span>
+                            <div class="text-sm text-slate-900 bg-slate-900 p-2 rounded-lg mb-4 flex justify-between text-slate-300">
+                                <span>Set: <b>${m.p1Sets} - ${m.p2Sets}</b></span>
+                                <span>Game Berjalan: ${m.p1Games} - ${m.p2Games}</span>
                             </div>
                         </div>
-                        <button onclick="openScoreboard(${idx})" class="w-full bg-slate-700 hover:bg-emerald-600 text-white text-sm font-semibold py-2 rounded-lg transition">
-                            ${m.isFinished ? 'Ubah / Lihat Detail Skor' : 'Mulai / Catat Skor ➔'}
+                        <button onclick="openScoreboard('group', ${idx})" class="w-full bg-slate-700 hover:bg-emerald-600 text-white text-sm font-semibold py-2 rounded-lg transition">
+                            ${m.isFinished ? 'Ubah Skor' : 'Catat Skor ➔'}
                         </button>
                     </div>
                 `;
             });
         }
 
-        function openScoreboard(index) {
-            activeMatchIndex = index;
-            const m = matches[index];
+        function openScoreboard(type, index) {
+            activeMatchContext = { type, index };
+            const m = type === 'group' ? matches[index] : knockoutMatches[index];
 
-            document.getElementById('modal-match-title').innerText = `Match #${index + 1}`;
+            document.getElementById('modal-match-title').innerText = type === 'group' ? `Match Grup #${index + 1}` : m.title;
             document.getElementById('modal-match-teams').innerText = `${m.p1} vs ${m.p2}`;
             document.getElementById('team1-name').innerText = m.p1;
             document.getElementById('team2-name').innerText = m.p2;
@@ -280,18 +302,18 @@ Tim Delta</textarea>
             document.getElementById('scoreboard-modal').classList.add('hidden');
             renderMatches();
             renderStandings();
+            updateKnockoutSeeds();
         }
 
         function updateScoreboardUI() {
-            const m = matches[activeMatchIndex];
+            const m = activeMatchContext.type === 'group' ? matches[activeMatchContext.index] : knockoutMatches[activeMatchContext.index];
             document.getElementById('team1-sets').innerText = m.p1Sets;
             document.getElementById('team2-sets').innerText = m.p2Sets;
             document.getElementById('team1-games').innerText = m.p1Games;
             document.getElementById('team2-games').innerText = m.p2Games;
             
             document.getElementById('team1-points').innerText = pointSequence[m.p1PointIndex];
-            document.getElementById('team3-points').innerText = pointSequence[m.p2PointIndex];
-            document.getElementById('team3-points').nextElementSibling ? null : null; // Label fix
+            document.getElementById('team2-points').innerText = pointSequence[m.p2PointIndex];
 
             const alertBox = document.getElementById('match-status-alert');
             if (m.isFinished) {
@@ -303,66 +325,54 @@ Tim Delta</textarea>
         }
 
         function addPoint(playerTeam) {
-            let m = matches[activeMatchIndex];
+            let m = activeMatchContext.type === 'group' ? matches[activeMatchContext.index] : knockoutMatches[activeMatchContext.index];
             if (m.isFinished) return;
 
-            if (playerTeam === 0) {
-                m.p1PointIndex++;
-                checkGameWon(0);
-            } else {
-                m.p2PointIndex++;
-                checkGameWon(1);
-            }
+            if (playerTeam === 0) m.p1PointIndex++;
+            else m.p2PointIndex++;
+            
+            checkGameWon();
             updateScoreboardUI();
         }
 
-        function checkGameWon(scorer) {
-            let m = matches[activeMatchIndex];
+        function checkGameWon() {
+            let m = activeMatchContext.type === 'group' ? matches[activeMatchContext.index] : knockoutMatches[activeMatchContext.index];
             let p1Idx = m.p1PointIndex;
             let p2Idx = m.p2PointIndex;
 
-            // Logika Tenis Standar (0, 15, 30, 40, Deuce/Advantage, Game)
             let p1WonGame = false;
             let p2WonGame = false;
 
             if (p1Idx >= 3 && p2Idx >= 3) {
                 if (p1Idx - p2Idx >= 2) p1WonGame = true;
                 else if (p2Idx - p1Idx >= 2) p2WonGame = true;
-                else if (p1Idx - p2Idx === 1) {
-                    // P1 Advantage
-                    m.p1PointIndex = 4; // AD
-                    m.p2PointIndex = 3; // 40
-                } else if (p2Idx - p1Idx === 1) {
-                    // P2 Advantage
-                    m.p2PointIndex = 4; // AD
-                    m.p1PointIndex = 3; // 40
-                } else if (p1Idx === p2Idx) {
-                    // Kembali ke Deuce (40-40)
-                    m.p1PointIndex = 3;
-                    m.p2PointIndex = 3;
-                }
+                else if (p1Idx - p2Idx === 1) { m.p1PointIndex = 4; m.p2PointIndex = 3; }
+                else if (p2Idx - p1Idx === 1) { m.p2PointIndex = 4; m.p1PointIndex = 3; }
+                else if (p1Idx === p2Idx) { m.p1PointIndex = 3; m.p2PointIndex = 3; }
             } else {
                 if (p1Idx > 3) p1WonGame = true;
                 if (p2Idx > 3) p2WonGame = true;
             }
 
-            if (p1WonGame) {
-                m.p1Games++;
+            if (p1WonGame || p2WonGame) {
+                let wonBy = p1WonGame ? 1 : 2;
+                if (wonBy === 1) {
+                    m.p1Games++;
+                    m.totalP1GamesWon = (m.totalP1GamesWon || 0) + 1;
+                    m.totalP2GamesLost = (m.totalP2GamesLost || 0) + 1;
+                } else {
+                    m.p2Games++;
+                    m.totalP2GamesWon = (m.totalP2GamesWon || 0) + 1;
+                    m.totalP1GamesLost = (m.totalP1GamesLost || 0) + 1;
+                }
                 m.p1PointIndex = 0;
                 m.p2PointIndex = 0;
-                checkSetWon();
-            } else if (p2WonGame) {
-                m.p2Games++;
-                m.p1PointIndex = 0;
-                m.p2PointIndex = 0;
-                checkSetWon();
+                checkSetWon(m);
             }
         }
 
-        function checkSetWon() {
-            let m = matches[activeMatchIndex];
+        function checkSetWon(m) {
             let targetGames = config.gamesPerSet;
-
             let p1G = m.p1Games;
             let p2G = m.p2Games;
 
@@ -379,78 +389,171 @@ Tim Delta</textarea>
                 if (setWinner === 1) m.p1Sets++;
                 else m.p2Sets++;
 
-                // Reset games untuk set berikutnya
                 m.p1Games = 0;
                 m.p2Games = 0;
 
-                // Cek Match Selesai
-                let setsNeededToWin = Math.ceil(config.sets / 2);
-                if (m.p1Sets === setsNeededToWin) {
-                    m.isFinished = true;
-                    m.winner = m.p1;
-                } else if (m.p2Sets === setsNeededToWin) {
-                    m.isFinished = true;
-                    m.winner = m.p2;
+                let setsNeeded = Math.ceil(config.sets / 2);
+                if (m.p1Sets === setsNeeded) {
+                    m.isFinished = true; m.winner = m.p1;
+                } else if (m.p2Sets === setsNeeded) {
+                    m.isFinished = true; m.winner = m.p2;
                 }
             }
         }
 
         function renderStandings() {
-            // Kalkulasi statistik dari seluruh matches yang selesai
-            let stats = {};
-            players.forEach(p => {
-                stats[p] = { played: 0, won: 0, lost: 0, setDiff: 0, gameDiff: 0, points: 0 };
-            });
+            const container = document.getElementById('standings-container');
+            container.innerHTML = '';
 
-            matches.forEach(m => {
-                if (m.isFinished) {
+            Object.keys(pools).forEach(poolName => {
+                let poolPlayers = pools[poolName];
+                let stats = {};
+                poolPlayers.forEach(p => {
+                    stats[p] = { played: 0, won: 0, lost: 0, gamesWon: 0, gamesLost: 0, points: 0 };
+                });
+
+                matches.filter(m => m.pool === poolName && m.isFinished).forEach(m => {
                     stats[m.p1].played++;
                     stats[m.p2].played++;
 
-                    stats[m.p1].setDiff += (m.p1Sets - m.p2Sets);
-                    stats[m.p2].setDiff += (m.p2Sets - m.p1Sets);
+                    stats[m.p1].gamesWon += (m.totalP1GamesWon || 0);
+                    stats[m.p1].gamesLost += (m.totalP1GamesLost || 0);
+                    stats[m.p2].gamesWon += (m.totalP2GamesWon || 0);
+                    stats[m.p2].gamesLost += (m.totalP2GamesLost || 0);
 
                     if (m.winner === m.p1) {
-                        stats[m.p1].won++;
-                        stats[m.p1].points += 2; // 2 Poin untuk menang
+                        stats[m.p1].won++; stats[m.p1].points += 2;
                         stats[m.p2].lost++;
                     } else {
-                        stats[m.p2].won++;
-                        stats[m.p2].points += 2;
+                        stats[m.p2].won++; stats[m.p2].points += 2;
                         stats[m.p1].lost++;
                     }
-                }
+                });
+
+                // Urutkan berdasarkan sistem pilihan
+                let sorted = [...poolPlayers].sort((a, b) => {
+                    let sA = stats[a], sB = stats[b];
+                    if (config.scoringSystem === 'match-wins') {
+                        if (sB.points !== sA.points) return sB.points - sA.points;
+                    }
+                    // Tie-break / Utama berdasarkan Selisih Game (Game Won - Game Lost)
+                    let diffA = sA.gamesWon - sA.gamesLost;
+                    let diffB = sB.gamesWon - sB.gamesLost;
+                    if (diffB !== diffA) return diffB - diffA;
+                    return sB.gamesWon - sA.gamesWon;
+                });
+
+                let rowsHtml = '';
+                sorted.forEach((p, idx) => {
+                    let st = stats[p];
+                    let diff = st.gamesWon - st.gamesLost;
+                    rowsHtml += `
+                        <tr class="border-b border-slate-700/60 hover:bg-slate-700/30 text-sm">
+                            <td class="p-3 text-center font-bold text-emerald-400">${idx + 1}</td>
+                            <td class="p-3 font-semibold text-slate-100">${p}</td>
+                            <td class="p-3 text-center">${st.played}</td>
+                            <td class="p-3 text-center text-emerald-400 font-semibold">${st.won}</td>
+                            <td class="p-3 text-center text-rose-400">${st.lost}</td>
+                            <td class="p-3 text-center text-emerald-300 font-bold">${st.gamesWon}</td>
+                            <td class="p-3 text-center text-rose-300">${st.gamesLost}</td>
+                            <td class="p-3 text-center font-bold ${diff >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${diff >= 0 ? '+' + diff : diff}</td>
+                            ${config.scoringSystem === 'match-wins' ? `<td class="p-3 text-center font-black text-amber-300">${st.points}</td>` : ''}
+                        </tr>
+                    `;
+                });
+
+                container.innerHTML += `
+                    <div class="bg-slate-800 rounded-2xl border border-slate-700 p-5 shadow-xl">
+                        <h3 class="font-bold text-emerald-400 mb-3 text-base">${poolName}</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-700/50 text-slate-300 border-b border-slate-700 text-xs uppercase">
+                                        <th class="p-3 text-center w-10">Pos</th>
+                                        <th class="p-3">Tim</th>
+                                        <th class="p-3 text-center">Main</th>
+                                        <th class="p-3 text-center">M</th>
+                                        <th class="p-3 text-center">K</th>
+                                        <th class="p-3 text-center">GM</th>
+                                        <th class="p-3 text-center">GK</th>
+                                        <th class="p-3 text-center">Selisih Game</th>
+                                        ${config.scoringSystem === 'match-wins' ? '<th class="p-3 text-center">Poin</th>' : ''}
+                                    </tr>
+                                </thead>
+                                <tbody>${rowsHtml}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function getPoolStandings(poolName) {
+            let poolPlayers = pools[poolName] || [];
+            let stats = {};
+            poolPlayers.forEach(p => { stats[p] = { gamesWon: 0, gamesLost: 0, points: 0, won: 0 }; });
+
+            matches.filter(m => m.pool === poolName && m.isFinished).forEach(m => {
+                stats[m.p1].gamesWon += (m.totalP1GamesWon || 0);
+                stats[m.p1].gamesLost += (m.totalP1GamesLost || 0);
+                stats[m.p2].gamesWon += (m.totalP2GamesWon || 0);
+                stats[m.p2].gamesLost += (m.totalP2GamesLost || 0);
+                if (m.winner === m.p1) { stats[m.p1].won++; stats[m.p1].points += 2; }
+                else { stats[m.p2].won++; stats[m.p2].points += 2; }
             });
 
-            // Urutkan klasemen berdasarkan Poin -> Selisih Set -> Selisih Game
-            let sortedPlayers = [...players].sort((a, b) => {
-                if (stats[b].points !== stats[a].points) return stats[b].points - stats[a].points;
-                if (stats[b].setDiff !== stats[a].setDiff) return stats[b].setDiff - stats[a].setDiff;
-                return stats[b].gameDiff - stats[a].gameDiff;
+            return [...poolPlayers].sort((a, b) => {
+                let diffA = stats[a].gamesWon - stats[a].gamesLost;
+                let diffB = stats[b].gamesWon - stats[b].gamesLost;
+                if (diffB !== diffA) return diffB - diffA;
+                return stats[b].gamesWon - stats[a].gamesWon;
             });
+        }
 
-            const tbody = document.getElementById('standings-body');
-            tbody.innerHTML = '';
+        function updateKnockoutSeeds() {
+            const poolNames = Object.keys(pools);
+            if (poolNames.length >= 2) {
+                let poolAStandings = getPoolStandings(poolNames[0]);
+                let poolBStandings = getPoolStandings(poolNames[1]);
 
-            sortedPlayers.forEach((p, idx) => {
-                let st = stats[p];
-                tbody.innerHTML += `
-                    <tr class="border-b border-slate-700/60 hover:bg-slate-700/30">
-                        <td class="p-3 text-center font-bold text-emerald-400">${idx + 1}</td>
-                        <td class="p-3 font-semibold text-slate-100">${p}</td>
-                        <td class="p-3 text-center">${st.played}</td>
-                        <td class="p-3 text-center text-emerald-400 font-semibold">${st.won}</td>
-                        <td class="p-3 text-center text-rose-400">${st.lost}</td>
-                        <td class="p-3 text-center">${st.setDiff >= 0 ? '+' + st.setDiff : st.setDiff}</td>
-                        <td class="p-3 text-center">${st.gameDiff >= 0 ? '+' + st.gameDiff : st.gameDiff}</td>
-                        <td class="p-3 text-center font-extrabold text-emerald-300 text-base">${st.points}</td>
-                    </tr>
+                knockoutMatches[0].p1 = poolAStandings[0] || 'Juara Pool A';
+                knockoutMatches[0].p2 = poolBStandings[1] || 'Runner-up Pool B';
+
+                knockoutMatches[1].p1 = poolBStandings[0] || 'Juara Pool B';
+                knockoutMatches[1].p2 = poolAStandings[1] || 'Runner-up Pool A';
+
+                knockoutMatches[2].p1 = knockoutMatches[0].winner || 'Pemenang SF 1';
+                knockoutMatches[2].p2 = knockoutMatches[1].winner || 'Pemenang SF 2';
+            }
+            renderKnockout();
+        }
+
+        function renderKnockout() {
+            const container = document.getElementById('knockout-container');
+            container.innerHTML = '';
+
+            knockoutMatches.forEach((km, idx) => {
+                container.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs text-emerald-400 font-bold uppercase tracking-wider">${km.title}</span>
+                                <span class="text-xs ${km.isFinished ? 'bg-emerald-900 text-emerald-300' : 'bg-slate-800 text-slate-400'} px-2 py-0.5 rounded">
+                                    ${km.isFinished ? 'Pemenang: ' + km.winner : 'Belum Mulai'}
+                                </span>
+                            </div>
+                            <div class="text-sm font-bold text-slate-100 mb-3">${km.p1} vs ${km.p2}</div>
+                        </div>
+                        <button onclick="openScoreboard('knockout', ${idx})" class="w-full bg-slate-800 hover:bg-emerald-600 text-white text-xs font-semibold py-2 rounded-lg transition">
+                            Catat / Edit Skor Knockout ➔
+                        </button>
+                    </div>
                 `;
             });
         }
 
         function resetTournament() {
-            if (confirm('Yakin ingin mereset turnamen dan kembali ke pengaturan awal?')) {
+            if (confirm('Yakin ingin mereset seluruh turnamen?')) {
                 document.getElementById('dashboard-section').classList.add('hidden');
                 document.getElementById('setup-section').classList.remove('hidden');
             }
